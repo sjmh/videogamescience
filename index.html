@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Video Games + Science!</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a1f;--blue:#00d4ff;--pink:#ff2d8a;--green:#39ff14;--yellow:#ffe600;--purple:#b44dff;--orange:#ff6b2b}
+html,body{height:100%;overflow:hidden;font-family:'Fredoka',sans-serif;background:var(--bg);color:#fff}
+.stars{position:fixed;inset:0;z-index:0}.star{position:absolute;background:#fff;border-radius:50%;animation:tw var(--d,3s) ease-in-out infinite alternate}
+@keyframes tw{0%{opacity:.12}100%{opacity:.8}}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 36px;opacity:0;transform:translateX(70px);transition:all .45s cubic-bezier(.4,0,.2,1);pointer-events:none;z-index:1}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit-left{opacity:0;transform:translateX(-70px)}
+.nav{position:fixed;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:3px;align-items:center;background:rgba(10,10,31,.8);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:4px 10px;z-index:100}
+.nav button{background:none;border:none;color:#fff;cursor:pointer;font-family:'Fredoka',sans-serif}
+.na{font-size:16px;opacity:.4;padding:1px 2px}.na:hover{opacity:1}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .3s}.dot.active{background:var(--blue);box-shadow:0 0 5px var(--blue);transform:scale(1.25)}
+.ctr{position:fixed;top:6px;right:12px;font-family:'Bangers',cursive;font-size:12px;color:rgba(255,255,255,.12);z-index:100}
+.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
+.tm{font-family:'Bangers',cursive;font-size:min(7.5vw,95px);text-align:center;line-height:1.05;letter-spacing:3px;background:linear-gradient(135deg,var(--blue),var(--pink),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:tp 3s ease-in-out infinite alternate}
+@keyframes tp{0%{filter:drop-shadow(0 0 25px rgba(0,212,255,.3))}100%{filter:drop-shadow(0 0 40px rgba(255,45,138,.3))}}
+.stt{font-size:min(2.5vw,26px);margin-top:10px;opacity:.6;text-align:center}
+.ps{margin-top:24px;font-size:15px;opacity:.4;animation:bl 1.2s step-end infinite}@keyframes bl{50%{opacity:0}}
+.tt{font-family:'Bangers',cursive;font-size:min(3.8vw,48px);text-align:center;letter-spacing:2px;margin-bottom:2px;line-height:1.1}
+.ts{font-size:min(1.5vw,15px);text-align:center;opacity:.75;margin-bottom:8px;max-width:780px;line-height:1.4}
+.da{width:min(94vw,900px);height:min(52vh,390px);border-radius:12px;position:relative;overflow:hidden;border:2px solid rgba(255,255,255,.08);background:rgba(0,0,0,.25)}
+.dl{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:8px;opacity:.2;pointer-events:none;text-align:center;width:90%}
+.cg{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:860px;margin-top:2px}
+.cc{background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.06);border-radius:11px;padding:12px 14px;flex:1;min-width:180px;max-width:255px;text-align:center;opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+.slide.active .cc{opacity:1;transform:translateY(0)}.slide.active .cc:nth-child(1){transition-delay:.1s}.slide.active .cc:nth-child(2){transition-delay:.2s}.slide.active .cc:nth-child(3){transition-delay:.3s}
+.cc .ci{font-size:30px;margin-bottom:3px;display:block}.cc .ct{font-family:'Bangers',cursive;font-size:16px;letter-spacing:1px;margin-bottom:2px}.cc .cx{font-size:11px;opacity:.7;line-height:1.3}
+.db{border:none;color:#fff;padding:5px 11px;border-radius:8px;font-family:'Fredoka',sans-serif;font-size:10px;font-weight:600;cursor:pointer;z-index:10;transition:transform .1s;position:absolute}.db:hover{transform:scale(1.05)}
+.di{position:absolute;top:5px;left:5px;background:rgba(0,0,0,.45);padding:3px 8px;border-radius:6px;font-size:9px;font-weight:600;z-index:10;line-height:1.5}
+canvas.f{width:100%;height:100%;display:block}
+/* Data */
+.dd{width:100%;height:100%;display:flex;padding:7px;gap:7px}
+.dsl{flex:0 0 220px;display:flex;flex-direction:column;gap:5px;justify-content:center;padding:3px}
+.sg{display:flex;flex-direction:column;gap:1px}.sg label{font-size:8px;font-weight:600;display:flex;justify-content:space-between}.sg input[type=range]{width:100%;height:4px;cursor:pointer}
+.dch{flex:1;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.dm{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:5px 9px;display:flex;align-items:center;gap:7px}
+.dm .mi{font-size:16px}.dm .mn{flex:1}.dm .ml{font-size:7px;opacity:.5;margin-bottom:1px}
+.mbb{height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;position:relative}.mb{height:100%;border-radius:5px;transition:width .4s,background .4s}.mv{position:absolute;right:3px;top:50%;transform:translateY(-50%);font-size:7px;font-weight:700}
+/* Reward game */
+.rg-wrap{width:100%;height:100%;display:flex}
+.rg-side{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;position:relative}
+.rg-divider{width:2px;background:rgba(255,255,255,.1)}
+.rg-label{font-family:'Bangers',cursive;font-size:24px;letter-spacing:1px;margin-bottom:6px}
+.rg-coins{font-size:14px;opacity:.7;margin-bottom:10px}
+.rg-btn{padding:14px 32px;border-radius:14px;border:none;font-family:'Bangers',cursive;font-size:22px;letter-spacing:1px;cursor:pointer;transition:all .15s;color:#fff}
+.rg-btn:hover{transform:scale(1.06)}
+.rg-btn:active{transform:scale(.97)}
+.rg-reward{font-size:36px;font-family:'Bangers',cursive;margin-top:10px;min-height:46px;transition:all .2s}
+.rg-plays{font-size:11px;opacity:.4;margin-top:6px}
+.rg-reveal{position:absolute;inset:0;background:rgba(10,10,31,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;opacity:0;pointer-events:none;transition:opacity .4s;z-index:20;border-radius:12px}
+.rg-reveal.show{opacity:1;pointer-events:all}
+/* Color demo */
+.clr-wrap{width:100%;height:100%;display:flex;position:relative}
+.clr-side{flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.clr-scene{flex:1;position:relative}
+.clr-label{text-align:center;padding:6px;font-size:12px;font-weight:600}
+.clr-mood{font-family:'Bangers',cursive;font-size:18px;letter-spacing:1px}
+.clr-why{font-size:10px;opacity:.6;margin-top:2px}
+.clr-divider{width:2px;background:rgba(255,255,255,.1)}
+/* End */
+.ee{font-size:min(8vw,80px);animation:fl 2s ease-in-out infinite alternate}@keyframes fl{0%{transform:translateY(0)}100%{transform:translateY(-10px)}}
+.et2{font-family:'Bangers',cursive;font-size:min(5vw,64px);text-align:center;background:linear-gradient(135deg,var(--green),var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:6px 0}
+.es{font-size:min(1.6vw,18px);opacity:.6;text-align:center}
+.efs{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;justify-content:center}
+.ef{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:7px 10px;text-align:center;min-width:105px}
+.ef .efi{font-size:20px}.ef .eft{font-size:9px;opacity:.6}
+</style></head><body>
+<div class="stars" id="stars"></div>
+
+<div class="slide active" id="s0"><div class="tm">Video Games<br>+ Science!</div><div class="stt">How the coolest games use real science 🧪🎮</div><div class="ps">→ Arrow keys to navigate →</div></div>
+
+<div class="slide" id="s1"><div class="badge" style="background:rgba(0,212,255,.12);color:var(--blue);border:2px solid var(--blue)">⚙️ Engineering</div><div class="tt" style="color:var(--blue)">Building a Game World</div><div class="ts">Every game world is built with <strong>real math, physics, and graphics</strong>!</div><div class="cg"><div class="cc" style="border-color:rgba(0,212,255,.12)"><span class="ci">🧮</span><div class="ct" style="color:var(--blue)">Math</div><div class="cx">Every pixel has X,Y coordinates. Moving = adding numbers <strong>60 times/sec</strong>!</div></div><div class="cc" style="border-color:rgba(0,212,255,.12)"><span class="ci">🍎</span><div class="ct" style="color:var(--blue)">Physics</div><div class="cx">Earth: <strong>9.8 m/s²</strong>. Moon: <strong>1.6</strong>. Jupiter: <strong>24.8</strong>. Games use real numbers!</div></div><div class="cc" style="border-color:rgba(0,212,255,.12)"><span class="ci">🖼️</span><div class="ct" style="color:var(--blue)">Graphics</div><div class="cx">Every 3D object = <strong>tiny triangles</strong>. One character ≈ 20,000 triangles!</div></div></div></div>
+
+<div class="slide" id="s2"><div class="badge" style="background:rgba(0,212,255,.12);color:var(--blue);border:2px solid var(--blue)">⚙️ Physics Sandbox</div><div class="tt" style="color:var(--blue)">Play With Physics!</div><div class="ts">Click to launch balls! Adjust gravity, bounciness, and friction.</div><div class="da" id="phys-demo"><div class="di">🌍 Click to launch!</div><div style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.45);padding:5px 8px;border-radius:7px;z-index:10;display:flex;flex-direction:column;gap:2px;font-size:8px;min-width:170px"><label style="display:flex;justify-content:space-between;font-weight:600">🍎 Gravity <span id="pGV" style="color:var(--yellow)">9.8</span></label><input type="range" min="1" max="30" value="10" id="pG" style="accent-color:var(--yellow)"><label style="display:flex;justify-content:space-between;font-weight:600">🏀 Bounce <span id="pBV" style="color:var(--green)">0.70</span></label><input type="range" min="0" max="100" value="70" id="pB" style="accent-color:var(--green)"><label style="display:flex;justify-content:space-between;font-weight:600">🧊 Friction <span id="pFV" style="color:var(--pink)">0.020</span></label><input type="range" min="0" max="20" value="2" id="pF" style="accent-color:var(--pink)"></div><button class="db" style="top:4px;right:4px;background:var(--pink)" onclick="balls=[]">Clear 🗑️</button><canvas class="f" id="pC"></canvas></div></div>
+
+<div class="slide" id="s3"><div class="badge" style="background:rgba(0,212,255,.12);color:var(--blue);border:2px solid var(--blue)">⚙️ Graphics</div><div class="tt" style="color:var(--blue)">Everything Is Triangles!</div><div class="ts">Every 3D object is triangles. Add more and watch it get smoother!</div><div class="da" id="gfx-demo"><div class="di">🔺 <span id="gTC">24</span> | <span id="gMN">Wireframe</span></div><button class="db" style="top:4px;right:4px;background:var(--blue)" id="gMB" onclick="cycleGM()">Next: Solid →</button><button class="db" style="top:30px;right:4px;background:rgba(0,212,255,.25);border:1px solid var(--blue)" onclick="cycleGD()">More! 🔺</button><canvas class="f" id="gC"></canvas></div></div>
+
+<div class="slide" id="s4"><div class="badge" style="background:rgba(255,230,0,.12);color:var(--yellow);border:2px solid var(--yellow)">🎨 Art Science</div><div class="tt" style="color:var(--yellow)">Color Sets the Mood</div><div class="ts">Artists choose colors to make you <strong>feel</strong> things. The same scene feels totally different!</div><div class="cg"><div class="cc" style="border-color:rgba(255,230,0,.12)"><span class="ci">😨</span><div class="ct" style="color:var(--yellow)">Dark = Danger</div><div class="cx">Deep blues, blacks, and cold grays tell your brain "be careful!" Horror games use these to keep you tense.</div></div><div class="cc" style="border-color:rgba(255,230,0,.12)"><span class="ci">🌅</span><div class="ct" style="color:var(--yellow)">Warm = Energy</div><div class="cx">Oranges, reds, and golds feel exciting and active. Battle scenes and adventure zones use warm palettes!</div></div><div class="cc" style="border-color:rgba(255,230,0,.12)"><span class="ci">🌿</span><div class="ct" style="color:var(--yellow)">Cool = Calm</div><div class="cx">Soft greens, light blues, and pastels feel safe and relaxing. Home bases and peaceful areas use these.</div></div></div></div>
+
+<div class="slide" id="s5"><div class="badge" style="background:rgba(255,230,0,.12);color:var(--yellow);border:2px solid var(--yellow)">🎨 Same Scene, Different Mood!</div><div class="tt" style="color:var(--yellow)">Color Changes Everything</div><div class="ts">Exact same shapes — only the <strong>colors</strong> changed. Look how different they feel!</div><div class="da" id="clr-demo"><div class="clr-wrap" id="clrWrap"></div><button class="db" style="bottom:4px;right:4px;background:var(--yellow);color:#000" id="clrBtn" onclick="cycleClr()">Next Pair →</button><div class="dl">Same mountains, trees, sky, character — only the palette changed!</div></div></div>
+
+<div class="slide" id="s6"><div class="badge" style="background:rgba(255,106,43,.12);color:var(--orange);border:2px solid var(--orange)">🧠 Game Design</div><div class="tt" style="color:var(--orange)">Psychology of Play</div><div class="ts">Designers use <strong>brain science</strong> to make games impossible to put down!</div><div class="cg"><div class="cc" style="border-color:rgba(255,106,43,.12)"><span class="ci">🎰</span><div class="ct" style="color:var(--orange)">Random Rewards</div><div class="cx">Your brain gets MORE excited by <strong>random</strong> rewards than guaranteed ones. Surprises = dopamine!</div></div><div class="cc" style="border-color:rgba(255,106,43,.12)"><span class="ci">⏰</span><div class="ct" style="color:var(--orange)">FOMO</div><div class="cx">"Limited time!" makes your brain panic about missing out. You play NOW instead of later!</div></div><div class="cc" style="border-color:rgba(255,106,43,.12)"><span class="ci">⚖️</span><div class="ct" style="color:var(--orange)">Meaningful Choice</div><div class="cx">Sword OR shield? Spend NOW or save? Real tradeoffs make your brain engage deeper.</div></div></div></div>
+
+<div class="slide" id="s7"><div class="badge" style="background:rgba(255,106,43,.12);color:var(--orange);border:2px solid var(--orange)">🧠 Which Game Do YOU Prefer?</div><div class="tt" style="color:var(--orange)">Fixed vs Random Rewards</div><div class="ts">Play both games. Same average coins. Which one <strong>feels</strong> more exciting?</div><div class="da" id="rg-demo"><div class="rg-wrap"><div class="rg-side" style="background:rgba(0,212,255,.03)"><div class="rg-label" style="color:var(--blue)">Game A</div><div class="rg-coins">🪙 <span id="rgCoinsA">0</span> coins</div><button class="rg-btn" style="background:linear-gradient(135deg,#0a3d5c,#0d6eaa)" onclick="playRG('A')">⚔️ Win!</button><div class="rg-reward" id="rgRewardA" style="color:var(--blue)">&nbsp;</div><div class="rg-plays">Plays: <span id="rgPlaysA">0</span></div></div><div class="rg-divider"></div><div class="rg-side" style="background:rgba(255,106,43,.03)"><div class="rg-label" style="color:var(--orange)">Game B</div><div class="rg-coins">🪙 <span id="rgCoinsB">0</span> coins</div><button class="rg-btn" style="background:linear-gradient(135deg,#5c2a0a,#aa5500)" onclick="playRG('B')">⚔️ Win!</button><div class="rg-reward" id="rgRewardB" style="color:var(--orange)">&nbsp;</div><div class="rg-plays">Plays: <span id="rgPlaysB">0</span></div></div></div><button class="db" style="bottom:4px;right:4px;background:var(--orange)" onclick="revealRG()">🧪 Reveal the Science!</button><button class="db" style="bottom:4px;left:4px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)" onclick="resetRG()">🔄 Reset</button><div class="rg-reveal" id="rgReveal"><div style="font-family:Bangers,cursive;font-size:min(3.5vw,36px);color:var(--orange);letter-spacing:2px">🧪 The Science of Random Rewards</div><div style="font-size:min(1.6vw,16px);opacity:.8;max-width:650px;line-height:1.5;margin:10px 0">Both games average <strong>~10 coins per play</strong>. But Game B <em>feels</em> way more exciting!<br><br>Your brain releases <strong>more dopamine</strong> from unexpected rewards than predictable ones. Scientists call this the <strong>"prediction error"</strong> — the surprise is what feels good, not the reward itself.<br><br>Game designers use this deliberately: loot boxes, random drops, and bonus rounds all exploit this exact brain quirk!</div><div style="font-size:11px;opacity:.3;margin-top:8px;cursor:pointer" onclick="document.getElementById('rgReveal').classList.remove('show')">Click to close</div></div></div></div>
+
+<div class="slide" id="s8"><div class="badge" style="background:rgba(180,77,255,.12);color:var(--purple);border:2px solid var(--purple)">🤖 Machine Learning</div><div class="tt" style="color:var(--purple)">Teaching Computers to Play</div><div class="ts">We let bots <strong>learn by failing</strong> — just like learning to ride a bike!</div><div class="cg"><div class="cc" style="border-color:rgba(180,77,255,.12)"><span class="ci">🧒</span><div class="ct" style="color:var(--purple)">Try & Fail</div><div class="cx">Bots play thousands of times. At first they're TERRIBLE — crashing into everything!</div></div><div class="cc" style="border-color:rgba(180,77,255,.12)"><span class="ci">🧬</span><div class="ct" style="color:var(--purple)">Evolution</div><div class="cx">Best bots "have kids." Strategies get copied with random tweaks — evolution in fast-forward!</div></div><div class="cc" style="border-color:rgba(180,77,255,.12)"><span class="ci">🏆</span><div class="ct" style="color:var(--purple)">Superhuman</div><div class="cx">AI has beaten world champions at Chess, Go, and StarCraft II!</div></div></div></div>
+
+<div class="slide" id="s9"><div class="badge" style="background:rgba(180,77,255,.12);color:var(--purple);border:2px solid var(--purple)">🤖 Watch Them Learn!</div><div class="tt" style="color:var(--purple)">Evolution in Action</div><div class="ts">Bots steer like race cars through a maze. Hit a wall = dead. Best survivors' kids get smarter!</div><div style="display:flex;gap:8px;width:min(94vw,900px);height:min(52vh,390px)"><div style="flex:1;border-radius:12px;position:relative;overflow:hidden;border:2px solid rgba(255,255,255,.08);background:rgba(0,0,0,.25)" id="ml-demo"><div class="di" id="mlOv">🧬 Gen: <span id="mlGen">1</span> | 🏆 <span id="mlBest">0</span>% | ✅ <span id="mlWins">0</span> | 😤 Stuck: <span id="mlStuck">0</span>/8</div><button class="db" style="top:4px;right:4px;background:var(--purple)" id="mlBtn" onclick="toggleML()">▶ Start!</button><button class="db" style="top:28px;right:4px;background:rgba(180,77,255,.25);border:1px solid var(--purple);font-size:8px;padding:3px 6px" onclick="resetML()">🔄</button><button class="db" style="top:50px;right:4px;background:rgba(180,77,255,.15);border:1px solid rgba(180,77,255,.3);font-size:8px;padding:3px 6px" id="mlSpeedBtn" onclick="cycleSpeed()">🐌 Crawl</button><canvas class="f" id="mlC"></canvas></div><div style="flex:0 0 155px;background:rgba(0,0,0,.25);border:2px solid rgba(255,255,255,.08);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:4px;justify-content:center;font-size:8px"><div style="font-family:Bangers,cursive;font-size:11px;color:var(--purple);text-align:center;letter-spacing:1px">🧬 Settings</div><label style="display:flex;justify-content:space-between;font-weight:600">🧬 Mutation <span id="mlMutV" style="color:var(--pink)">12%</span></label><input type="range" min="1" max="30" value="12" id="mlMut" style="accent-color:var(--pink);width:100%"><label style="display:flex;justify-content:space-between;font-weight:600">⚡ Y Penalty <span id="mlEffV" style="color:var(--green)">0x</span></label><input type="range" min="0" max="300" value="0" id="mlEff" style="accent-color:var(--green);width:100%"><label style="display:flex;justify-content:space-between;font-weight:600">🟠 Explorers <span id="mlExpV" style="color:var(--orange)">10%</span></label><input type="range" min="0" max="40" value="10" id="mlExp" style="accent-color:var(--orange);width:100%"><label style="display:flex;justify-content:space-between;font-weight:600">🔄 Turn <span id="mlTurnV" style="color:var(--blue)">0.75</span></label><input type="range" min="10" max="150" value="75" id="mlTurn" style="accent-color:var(--blue);width:100%"><div style="margin-top:4px;border-top:1px solid rgba(255,255,255,.08);padding-top:4px"><div style="font-size:7px;opacity:.4;text-align:center">🔴 Hall of Fame &nbsp; 🟡 Elite<br>🟣 Bred &nbsp; 🟠 Explorer &nbsp; 🟢 Winner</div></div></div></div></div>
+
+<div class="slide" id="s10"><div class="badge" style="background:rgba(57,255,20,.12);color:var(--green);border:2px solid var(--green)">📊 Data Science</div><div class="tt" style="color:var(--green)">Numbers That Tell Stories</div><div class="ts">Games track <strong>everything</strong> — then use data to improve!</div><div class="cg"><div class="cc" style="border-color:rgba(57,255,20,.12)"><span class="ci">🗺️</span><div class="ct" style="color:var(--green)">Heat Maps</div><div class="cx">Show where players die most. Red spot = fix it!</div></div><div class="cc" style="border-color:rgba(57,255,20,.12)"><span class="ci">📉</span><div class="ct" style="color:var(--green)">Tracking</div><div class="cx">Play time, battle pass opens, quit levels — <strong>millions of events daily</strong>.</div></div><div class="cc" style="border-color:rgba(57,255,20,.12)"><span class="ci">🎚️</span><div class="ct" style="color:var(--green)">Tuning</div><div class="cx">Adjust loot rates, difficulty, prices — watch behavior change!</div></div></div></div>
+
+<div class="slide" id="s11"><div class="badge" style="background:rgba(57,255,20,.12);color:var(--green);border:2px solid var(--green)">📊 Be the Data Scientist!</div><div class="tt" style="color:var(--green)">Tune the Game</div><div class="ts">Adjust sliders → watch <strong>simulated players respond</strong>!</div><div class="da" id="data-demo"><div class="dd"><div class="dsl" id="dS"></div><div class="dch" id="dC"></div></div></div></div>
+
+<div class="slide" id="s12"><div class="ee">🎮</div><div class="et2">Questions?</div><div class="es">Every video game is built with real science.</div><div class="efs"><div class="ef"><div class="efi">👩‍💻</div><div class="eft">Game teams:<br><strong>100+ scientists</strong></div></div><div class="ef"><div class="efi">🔺</div><div class="eft">One character:<br><strong>20K triangles</strong></div></div><div class="ef"><div class="efi">🎨</div><div class="eft">3 colors make<br><strong>millions</strong></div></div><div class="ef"><div class="efi">🤖</div><div class="eft">AI beats<br><strong>world champs</strong></div></div><div class="ef"><div class="efi">📊</div><div class="eft">Fortnite tracks<br><strong>every click</strong></div></div></div><div style="margin-top:12px;font-size:min(1.6vw,16px);opacity:.35">Maybe YOU'LL make the next one! 🚀</div></div>
+
+<div class="ctr" id="ctr">1/13</div><div class="nav" id="nav"></div>
+
+<script>
+const T=13;let cur=0;
+function go(n){if(n<0||n>=T||n===cur)return;const p=cur;document.getElementById('s'+p).classList.remove('active');document.getElementById('s'+p).classList.add('exit-left');setTimeout(()=>document.getElementById('s'+p).classList.remove('exit-left'),450);document.getElementById('s'+n).classList.add('active');cur=n;document.getElementById('ctr').textContent=(n+1)+'/'+T;document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===n));if(n===2)initP();if(n===3)initG();if(n===5)initClr();if(n===9)initML();if(n===11)initDD();if(n!==9&&mlRun){mlRun=false;document.getElementById('mlBtn').textContent='▶ Start!';}}
+(function(){const n=document.getElementById('nav');const l=document.createElement('button');l.className='na';l.textContent='◀';l.onclick=()=>go(cur-1);n.appendChild(l);for(let i=0;i<T;i++){const d=document.createElement('button');d.className='dot'+(i===0?' active':'');d.onclick=()=>go(i);n.appendChild(d);}const r=document.createElement('button');r.className='na';r.textContent='▶';r.onclick=()=>go(cur+1);n.appendChild(r);})();
+(function(){const c=document.getElementById('stars');for(let i=0;i<45;i++){const s=document.createElement('div');s.className='star';const z=Math.random()*2.5+.5;Object.assign(s.style,{width:z+'px',height:z+'px',left:Math.random()*100+'%',top:Math.random()*100+'%','--d':(2+Math.random()*4)+'s',animationDelay:(-Math.random()*5)+'s'});c.appendChild(s);}})();
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);});
+
+// ══ BALL PHYSICS ══
+let balls=[],pInit=false;
+function initP(){const c=document.getElementById('pC');const r=c.parentElement.getBoundingClientRect();c.width=r.width;c.height=r.height;if(pInit)return;pInit=true;c.addEventListener('click',e=>{if(e.target.closest('.db,.di,label,input'))return;const r2=c.getBoundingClientRect();const x=e.clientX-r2.left,y=e.clientY-r2.top;const a=-Math.PI/2+(Math.random()-.5)*1.2,sp=6+Math.random()*6;const cols=['#00d4ff','#ff2d8a','#39ff14','#ffe600','#b44dff','#ff6b2b'];balls.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:8+Math.random()*12,c:cols[0|Math.random()*cols.length],t:[]});});['pG','pB','pF'].forEach(id=>{document.getElementById(id).addEventListener('input',()=>{document.getElementById('pGV').textContent=(document.getElementById('pG').value*.98).toFixed(1);document.getElementById('pBV').textContent=(document.getElementById('pB').value/100).toFixed(2);document.getElementById('pFV').textContent=(document.getElementById('pF').value/1000).toFixed(3);});});requestAnimationFrame(pLoop);}
+function pLoop(){if(cur===2){const c=document.getElementById('pC'),x=c.getContext('2d'),W=c.width,H=c.height;const g=(document.getElementById('pG')?.value||10)*.098,bn=(document.getElementById('pB')?.value||70)/100,fr=(document.getElementById('pF')?.value||2)/1000;x.clearRect(0,0,W,H);for(const b of balls){b.vy+=g;b.vx*=(1-fr);b.vy*=(1-fr);b.t.push({x:b.x,y:b.y});if(b.t.length>30)b.t.shift();b.x+=b.vx;b.y+=b.vy;if(b.x-b.r<0){b.x=b.r;b.vx*=-bn}if(b.x+b.r>W){b.x=W-b.r;b.vx*=-bn}if(b.y+b.r>H){b.y=H-b.r;b.vy*=-bn;if(Math.abs(b.vy)<.5)b.vy=0}if(b.y-b.r<0){b.y=b.r;b.vy*=-bn}for(const b2 of balls){if(b2===b)continue;const dx=b2.x-b.x,dy=b2.y-b.y,d=Math.sqrt(dx*dx+dy*dy);if(d<b.r+b2.r&&d>0){const nx=dx/d,ny=dy/d,ol=(b.r+b2.r-d)/2;b.x-=nx*ol;b.y-=ny*ol;b2.x+=nx*ol;b2.y+=ny*ol;const dv=((b.vx-b2.vx)*nx+(b.vy-b2.vy)*ny);b.vx-=dv*nx*bn;b.vy-=dv*ny*bn;b2.vx+=dv*nx*bn;b2.vy+=dv*ny*bn}}if(b.t.length>1){x.beginPath();x.strokeStyle=b.c+'20';x.lineWidth=b.r*.4;x.lineCap='round';x.moveTo(b.t[0].x,b.t[0].y);for(let i=1;i<b.t.length;i++)x.lineTo(b.t[i].x,b.t[i].y);x.stroke()}x.beginPath();x.arc(b.x,b.y,b.r,0,Math.PI*2);const gr=x.createRadialGradient(b.x-b.r*.3,b.y-b.r*.3,b.r*.1,b.x,b.y,b.r);gr.addColorStop(0,'#fff');gr.addColorStop(.3,b.c);gr.addColorStop(1,b.c+'80');x.fillStyle=gr;x.shadowColor=b.c;x.shadowBlur=8;x.fill();x.shadowBlur=0}}requestAnimationFrame(pLoop);}
+
+// ══ 3D GFX ══
+let gInit=false,gM=0,gD=0,gA=0;const gMs=['Wireframe','Solid','Lit'],gDs=[{n:'24',s:4},{n:'96',s:8},{n:'384',s:16},{n:'1.5K',s:32}];
+function initG(){const c=document.getElementById('gC');const r=c.parentElement.getBoundingClientRect();c.width=r.width;c.height=r.height;if(!gInit){gInit=true;requestAnimationFrame(gLoop)}}
+function cycleGM(){gM=(gM+1)%gMs.length;document.getElementById('gMN').textContent=gMs[gM];document.getElementById('gMB').textContent='Next: '+gMs[(gM+1)%gMs.length]+' →';}
+function cycleGD(){gD=(gD+1)%gDs.length;document.getElementById('gTC').textContent=gDs[gD].n;}
+function mkS(s){const v=[],f=[];for(let i=0;i<=s;i++){const t=Math.PI*i/s;for(let j=0;j<=s;j++){const p=2*Math.PI*j/s;v.push([Math.sin(t)*Math.cos(p),Math.cos(t),Math.sin(t)*Math.sin(p)])}}for(let i=0;i<s;i++)for(let j=0;j<s;j++){const a=i*(s+1)+j,b=a+s+1;f.push([a,b,a+1],[b,b+1,a+1])}return{v,f}}
+function gLoop(){if(cur!==3){requestAnimationFrame(gLoop);return}const c=document.getElementById('gC'),x=c.getContext('2d'),W=c.width,H=c.height;x.clearRect(0,0,W,H);gA+=.012;const{v,f}=mkS(gDs[gD].s);const R=Math.min(W,H)*.28,cx=W/2,cy=H/2;const cA=Math.cos(gA),sA=Math.sin(gA),cB=Math.cos(gA*.7),sB=Math.sin(gA*.7);const pr=v.map(([px,py,pz])=>{const x1=px*cA-pz*sA,z1=px*sA+pz*cA,y1=py*cB-z1*sB,z2=py*sB+z1*cB;return{x:cx+x1*R,y:cy+y1*R,z:z2}});const so=f.map(fc=>({fc,az:(pr[fc[0]].z+pr[fc[1]].z+pr[fc[2]].z)/3})).sort((a,b)=>a.az-b.az);for(const{fc,az}of so){x.beginPath();x.moveTo(pr[fc[0]].x,pr[fc[0]].y);x.lineTo(pr[fc[1]].x,pr[fc[1]].y);x.lineTo(pr[fc[2]].x,pr[fc[2]].y);x.closePath();if(gM===0){x.strokeStyle='rgba(0,212,255,.5)';x.lineWidth=1;x.stroke()}else if(gM===1){const br=.3+.4*((az+1)/2);x.fillStyle=`rgba(0,${0|160*br},${0|255*br},.85)`;x.fill()}else{const a2=pr[fc[1]].x-pr[fc[0]].x,b2=pr[fc[1]].y-pr[fc[0]].y,c2=pr[fc[2]].x-pr[fc[0]].x,d2=pr[fc[2]].y-pr[fc[0]].y;const nz=a2*d2-b2*c2;const li=Math.max(.15,Math.min(1,nz/(R*R)*3));x.fillStyle=`rgb(${0|30+225*li},${0|80+175*li},${0|200+55*li})`;x.fill()}}requestAnimationFrame(gLoop);}
+
+// ══ COLOR PALETTES ══
+let clrIdx=0,clrInit=false;
+const palettes=[
+  {nameL:'🌿 Peaceful Forest',nameR:'😨 Haunted Forest',
+   L:{sky:'#87CEEB',skyB:'#c8e6c9',mount:'#4a7c59',mountB:'#2d5a3f',ground:'#6abf69',tree:'#2e7d32',trunk:'#5d4037',sun:'#fff9c4',char:'#ff8a65'},
+   R:{sky:'#1a1a2e',skyB:'#16213e',mount:'#0f1626',mountB:'#0a0f1a',ground:'#1b2838',tree:'#1a1a2e',trunk:'#2c2c3e',sun:'#4a4a6a',char:'#8888aa'},
+   whyL:'Soft greens + warm light = safe & calm',whyR:'Dark blues + no light = eerie & tense'},
+  {nameL:'⚔️ Epic Battle',nameR:'🏖️ Beach Vacation',
+   L:{sky:'#4a0000',skyB:'#8b0000',mount:'#5c1a1a',mountB:'#3d0c0c',ground:'#4e2a2a',tree:'#6b2a2a',trunk:'#3e1a1a',sun:'#ff6600',char:'#ff4444'},
+   R:{sky:'#00bcd4',skyB:'#4dd0e1',mount:'#ffe082',mountB:'#ffcc02',ground:'#fff8e1',tree:'#66bb6a',trunk:'#8d6e63',sun:'#ffeb3b',char:'#ff7043'},
+   whyL:'Reds + dark tones = danger & intensity',whyR:'Bright blues + yellows = happy & relaxed'},
+  {nameL:'🔮 Magic Kingdom',nameR:'🏜️ Scorched Desert',
+   L:{sky:'#1a0033',skyB:'#4a148c',mount:'#6a1b9a',mountB:'#4a148c',ground:'#2e1065',tree:'#7c4dff',trunk:'#4a148c',sun:'#e040fb',char:'#ea80fc'},
+   R:{sky:'#ff8f00',skyB:'#ff6f00',mount:'#bf360c',mountB:'#8d2600',ground:'#e65100',tree:'#a1887f',trunk:'#6d4c41',sun:'#ffeb3b',char:'#795548'},
+   whyL:'Deep purples + glowing accents = mysterious',whyR:'Burnt oranges + browns = hot & harsh'},
+];
+
+function initClr(){if(clrInit)return;clrInit=true;renderClr();}
+function cycleClr(){clrIdx=(clrIdx+1)%palettes.length;renderClr();}
+function renderClr(){
+  const p=palettes[clrIdx];const wrap=document.getElementById('clrWrap');
+  wrap.innerHTML='';
+  [['L',p.nameL,p.L,p.whyL],['R',p.nameR,p.R,p.whyR]].forEach(([side,name,c,why],i)=>{
+    const div=document.createElement('div');div.className='clr-side';
+    const scene=document.createElement('canvas');scene.className='f';div.appendChild(scene);
+    const label=document.createElement('div');label.className='clr-label';
+    label.innerHTML=`<div class="clr-mood">${name}</div><div class="clr-why">${why}</div>`;
+    div.appendChild(label);
+    if(i===0){const d=document.createElement('div');d.className='clr-divider';wrap.appendChild(div);wrap.appendChild(d);}else{wrap.appendChild(div);}
+    setTimeout(()=>{const r=scene.parentElement.getBoundingClientRect();scene.width=r.width;scene.height=r.height-50;drawScene(scene,c);},50);
+  });
+}
+function drawScene(canvas,c){
+  const x=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  // Sky gradient
+  const sg=x.createLinearGradient(0,0,0,H);sg.addColorStop(0,c.sky);sg.addColorStop(1,c.skyB);x.fillStyle=sg;x.fillRect(0,0,W,H);
+  // Sun/moon
+  x.beginPath();x.arc(W*.75,H*.2,H*.12,0,Math.PI*2);x.fillStyle=c.sun;x.fill();
+  // Mountains
+  x.beginPath();x.moveTo(0,H*.55);x.lineTo(W*.2,H*.25);x.lineTo(W*.4,H*.5);x.lineTo(W*.6,H*.2);x.lineTo(W*.8,H*.45);x.lineTo(W,H*.3);x.lineTo(W,H*.55);x.fillStyle=c.mount;x.fill();
+  x.beginPath();x.moveTo(0,H*.6);x.lineTo(W*.15,H*.4);x.lineTo(W*.35,H*.55);x.lineTo(W*.55,H*.35);x.lineTo(W*.75,H*.5);x.lineTo(W*.95,H*.38);x.lineTo(W,H*.6);x.fillStyle=c.mountB;x.fill();
+  // Ground
+  x.fillStyle=c.ground;x.fillRect(0,H*.6,W,H*.4);
+  // Trees
+  for(let i=0;i<4;i++){const tx=W*(.12+i*.22),ty=H*.6;
+    x.fillStyle=c.trunk;x.fillRect(tx-3,ty-20,6,20);
+    x.beginPath();x.moveTo(tx,ty-55);x.lineTo(tx-18,ty-15);x.lineTo(tx+18,ty-15);x.fillStyle=c.tree;x.fill();
+    x.beginPath();x.moveTo(tx,ty-45);x.lineTo(tx-14,ty-20);x.lineTo(tx+14,ty-20);x.fill();
+  }
+  // Character
+  x.fillStyle=c.char;x.fillRect(W*.5-6,H*.6-22,12,16);
+  x.beginPath();x.arc(W*.5,H*.6-26,7,0,Math.PI*2);x.fill();
+}
+
+// ══ REWARD GAME ══
+let rgA={coins:0,plays:0},rgB={coins:0,plays:0};
+function playRG(side){
+  if(side==='A'){
+    rgA.coins+=10;rgA.plays++;
+    document.getElementById('rgCoinsA').textContent=rgA.coins;
+    document.getElementById('rgPlaysA').textContent=rgA.plays;
+    document.getElementById('rgRewardA').textContent='+10 🪙';
+    document.getElementById('rgRewardA').style.transform='scale(1.1)';
+    setTimeout(()=>document.getElementById('rgRewardA').style.transform='scale(1)',150);
+  }else{
+    const rewards=[2,2,3,5,5,8,8,10,10,10,12,15,15,18,20,25];
+    const r=rewards[0|Math.random()*rewards.length];
+    rgB.coins+=r;rgB.plays++;
+    document.getElementById('rgCoinsB').textContent=rgB.coins;
+    document.getElementById('rgPlaysB').textContent=rgB.plays;
+    const el=document.getElementById('rgRewardB');
+    el.textContent='+'+r+' 🪙'+(r>=20?' 🎉':'')+(r>=25?' 🔥':'');
+    el.style.transform='scale('+(1+r/30)+')';el.style.color=r>=15?'var(--yellow)':r>=10?'var(--orange)':'var(--pink)';
+    setTimeout(()=>{el.style.transform='scale(1)';el.style.color='var(--orange)';},300);
+  }
+}
+function revealRG(){document.getElementById('rgReveal').classList.add('show');}
+function resetRG(){rgA={coins:0,plays:0};rgB={coins:0,plays:0};['rgCoinsA','rgCoinsB','rgPlaysA','rgPlaysB'].forEach(id=>document.getElementById(id).textContent='0');['rgRewardA','rgRewardB'].forEach(id=>document.getElementById(id).innerHTML='&nbsp;');document.getElementById('rgReveal').classList.remove('show');}
+
+// ══ ML ══
+let mlRun=false,mlG=1,mlBS=0,mlWT=0,mlReached=false,mlBL=0,mlStag=0,mlLastBest=0,mlFlash=0;
+let mlHallOfFame=[]; // persistent best-ever gene sets with their fitness
+let mlBots=[],mlBarriers=[],mlWallCols=[];
+const BN=60,STP=2000,SS=3.5,MT=0.75;
+const mlGoal={x:0,y:0,r:18};
+
+function initML(){
+  const c=document.getElementById('mlC');const r=c.parentElement.getBoundingClientRect();c.width=r.width;c.height=r.height;
+  // Wire up settings sliders
+  ['mlMut','mlEff','mlExp','mlTurn'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.addEventListener('input',()=>{
+      document.getElementById('mlMutV').textContent=document.getElementById('mlMut').value+'%';
+      document.getElementById('mlEffV').textContent=document.getElementById('mlEff').value+'x';
+      document.getElementById('mlExpV').textContent=document.getElementById('mlExp').value+'%';
+      document.getElementById('mlTurnV').textContent=(document.getElementById('mlTurn').value/100).toFixed(2);
+    });
+  });
+  if(mlBarriers.length){drawMl();return;}
+  const W=c.width,H=c.height;
+  mlGoal.x=W-25;mlGoal.y=H/2;
+  mlBarriers=[];
+  mlWallCols=[];
+
+  const cols=8+Math.floor(Math.random()*4);
+  const margin=W*0.07;
+  const spacing=(W-margin*2)/(cols+1);
+
+  for(let i=0;i<cols;i++){
+    const cx=Math.round(margin+spacing*(i+1));
+    mlWallCols.push(cx); // track column positions
+    // Each column gets 1-3 wall segments with gaps between them
+    const numSegs=1+Math.floor(Math.random()*2.5); // 1-3 segments
+    const gapSize=Math.round(H*(0.2+Math.random()*0.15)); // 20-35% gap
+
+    if(numSegs===1){
+      // Single wall with gap at random position
+      const gapY=Math.round(Math.random()*(H-gapSize));
+      if(gapY>8) mlBarriers.push({x:cx,y:0,w:8+Math.round(Math.random()*6),h:gapY});
+      if(gapY+gapSize<H-8) mlBarriers.push({x:cx,y:gapY+gapSize,w:8+Math.round(Math.random()*6),h:H-gapY-gapSize});
+    } else {
+      // Multiple segments scattered vertically
+      const segH=Math.round(H*(0.15+Math.random()*0.2));
+      for(let s=0;s<numSegs;s++){
+        const sy=Math.round(Math.random()*(H-segH));
+        const sw=8+Math.round(Math.random()*8);
+        // Offset X slightly for variety
+        const sx=cx+Math.round((Math.random()-0.5)*spacing*0.3);
+        mlBarriers.push({x:sx,y:sy,w:sw,h:segH});
+      }
+    }
+  }
+
+  // Add a few random floating blocks for extra chaos
+  const extras=3+Math.floor(Math.random()*4);
+  for(let i=0;i<extras;i++){
+    const bx=Math.round(margin+Math.random()*(W-margin*2));
+    const by=Math.round(Math.random()*(H-40));
+    const bw=15+Math.round(Math.random()*30);
+    const bh=12+Math.round(Math.random()*25);
+    mlBarriers.push({x:bx,y:by,w:bw,h:bh});
+  }
+
+  // Make sure start area and goal area are clear
+  mlBarriers=mlBarriers.filter(b=>!(b.x<40&&b.y<H*0.7&&b.y+b.h>H*0.3));
+  mlBarriers=mlBarriers.filter(b=>!(b.x+b.w>W-45));
+
+  mlBots=mkMlB(null,0);drawMl();
+}
+
+function mkMlB(parents,genN){
+  const c=document.getElementById('mlC');const arr=[];
+  const baseMut=(document.getElementById('mlMut')?.value||12)/100;
+  const ms=Math.max(0.03,baseMut*Math.pow(0.97,genN||0));
+  const wr=Math.max(0.005,(baseMut*0.25)*Math.pow(0.95,genN||0));
+  for(let i=0;i<BN;i++){
+    let genes,type='bred';
+    if(parents&&parents.length){
+      if(i<2){genes=[...parents[i%parents.length].genes];type='elite';}
+      else{const par=parents[0|Math.random()*parents.length];genes=par.genes.map(g=>{if(Math.random()<wr)return Math.random()*2-1;return Math.max(-1,Math.min(1,g+(Math.random()-.5)*ms));});}
+    }else{
+      genes=Array.from({length:STP},()=>Math.random()*2-1);
+      type='explorer';
+    }
+    arr.push({x:12,y:c.height/2,heading:0,genes,step:0,dead:false,reached:false,trail:[],maxX:12,totalDist:0,totalYDist:0,closestGoalDist:Infinity,wallsPassed:0,type});
+  }return arr;
+}
+
+function toggleML(){if(!mlBarriers.length)initML();mlRun=!mlRun;document.getElementById('mlBtn').textContent=mlRun?'⏸':'▶ Start!';if(mlRun)runMl();}
+function cycleSpeed(){const speeds=[{v:1,label:'🐌 Crawl'},{v:4,label:'🐢 Slow'},{v:12,label:'🐇 Normal'},{v:40,label:'🚀 Fast'},{v:120,label:'⚡ Turbo'}];const cur=speeds.findIndex(s=>s.v===mlSpeed);const next=(cur+1)%speeds.length;mlSpeed=speeds[next].v;document.getElementById('mlSpeedBtn').textContent=speeds[next].label;}
+function resetML(){mlRun=false;mlG=1;mlBS=0;mlWT=0;mlReached=false;mlBL=0;mlStag=0;mlLastBest=0;mlFlash=0;mlBarriers=[];mlHallOfFame=[];document.getElementById('mlBtn').textContent='▶ Start!';document.getElementById('mlGen').textContent=1;document.getElementById('mlBest').textContent=0;document.getElementById('mlWins').textContent=0;initML();}
+
+let mlSpeed=1; // steps per frame, adjustable
+
+function runMl(){
+  if(!mlRun||cur!==9)return;const c=document.getElementById('mlC'),W=c.width,H=c.height;
+  for(let s=0;s<mlSpeed;s++){const curMT=(document.getElementById('mlTurn')?.value||75)/100;for(const bot of mlBots){
+    if(bot.dead||bot.reached||bot.step>=STP)continue;
+    bot.heading+=bot.genes[bot.step]*curMT;
+    // Clamp to right half: can go straight up or down but never left
+    bot.heading=Math.max(-Math.PI/2,Math.min(Math.PI/2,bot.heading));
+    const nx=bot.x+Math.cos(bot.heading)*SS,ny=bot.y+Math.sin(bot.heading)*SS;
+    if(ny<3||ny>H-3){bot.dead=true;bot.step++;continue;}
+    if(nx<3){bot.step++;continue;}
+    // Past the goal X? You missed it — die
+    if(nx>mlGoal.x+mlGoal.r+15){bot.dead=true;bot.step++;continue;}
+    let hit=false;for(const b of mlBarriers){if(nx>b.x&&nx<b.x+b.w&&ny>b.y&&ny<b.y+b.h){hit=true;break;}}
+    if(hit){bot.dead=true;bot.step++;continue;}
+    if(bot.step%4===0)bot.trail.push({x:bot.x,y:bot.y});
+    // Track total path distance, Y distance, and closest goal approach
+    bot.totalDist+=Math.sqrt((nx-bot.x)**2+(ny-bot.y)**2);
+    bot.totalYDist+=Math.abs(ny-bot.y);
+    bot.x=nx;bot.y=ny;bot.step++;
+    if(nx>bot.maxX)bot.maxX=nx;
+    const goalDist=Math.sqrt((bot.x-mlGoal.x)**2+(bot.y-mlGoal.y)**2);
+    if(goalDist<bot.closestGoalDist)bot.closestGoalDist=goalDist;
+    if(goalDist<mlGoal.r+10)bot.reached=true;
+  }}
+  const allDone=mlBots.every(b=>b.dead||b.reached||b.step>=STP);drawMl();
+  if(allDone){
+    const globalBestX=Math.max(...mlBots.map(b=>b.maxX));
+    const maxDist=Math.sqrt(W*W+H*H);
+    for(const bot of mlBots){
+      // Equal weight: how far right + how long you survived
+      bot.fitness=(bot.maxX/W)*500 + (bot.step/STP)*500;
+
+      // Goal proximity bonus (0-300)
+      const goalProx=Math.max(0,1-bot.closestGoalDist/maxDist);
+      bot.fitness+=goalProx*300;
+
+      // Y PENALTY (slider)
+      const effMult=+(document.getElementById('mlEff')?.value||0);
+      if(bot.totalYDist>0){
+        bot.fitness-=(bot.totalYDist/H)*effMult;
+      }
+
+      // EXPLORER BONUS
+      if(bot.type==='explorer'&&bot.maxX>globalBestX*0.7){
+        bot.fitness*=1.5;
+      }
+
+      // Overshoot penalty
+      if(!bot.reached&&bot.maxX>mlGoal.x-30) bot.fitness-=100;
+
+      // Goal reached bonus
+      if(bot.reached)bot.fitness+=5000+(STP-bot.step)*1;
+    }
+    mlBots.sort((a,b)=>b.fitness-a.fitness);
+    const bp=mlBots[0].reached?100:Math.max(0,Math.round((mlBots[0].maxX/W)*100));
+    if(bp>mlBS)mlBS=bp;document.getElementById('mlBest').textContent=mlBS;
+    if(mlBots[0].step>mlBL)mlBL=mlBots[0].step;
+    const w=mlBots.filter(b=>b.reached).length;if(w>0)mlReached=true;mlWT+=w;document.getElementById('mlWins').textContent=mlWT;
+
+    // HALL OF FAME: maintain the best-ever genes (up to 10)
+    // Any bot that reached the goal OR has top fitness gets considered
+    const candidates=mlBots.filter(b=>b.reached||b.fitness>=(mlBots[0].fitness*0.8));
+    for(const bot of candidates){
+      const entry={genes:[...bot.genes],fitness:bot.fitness,reached:bot.reached};
+      if(mlHallOfFame.length<10){
+        mlHallOfFame.push(entry);
+      }else{
+        // Replace worst hall member if this bot is better
+        mlHallOfFame.sort((a,b)=>b.fitness-a.fitness);
+        if(bot.fitness>mlHallOfFame[mlHallOfFame.length-1].fitness){
+          mlHallOfFame[mlHallOfFame.length-1]=entry;
+        }
+      }
+    }
+    mlHallOfFame.sort((a,b)=>b.fitness-a.fitness);
+
+    // Stagnation detection
+    const curBestFit=mlBots[0].fitness;
+    if(curBestFit<=mlLastBest+5)mlStag++;else{mlStag=0;mlLastBest=curBestFit;}
+    document.getElementById('mlStuck').textContent=mlStag+'/8';
+    document.getElementById('mlStuck').style.color=mlStag>=6?'#ff2d8a':mlStag>=3?'#ff6b2b':'rgba(255,255,255,.5)';
+    mlG++;document.getElementById('mlGen').textContent=mlG;
+
+    // Build next generation: hall of fame as elites + bred children + explorers
+    const parents=mlBots.slice(0,Math.max(12,Math.ceil(BN*.25)));
+    let newBots=mkMlB(parents,mlG);
+
+    // Inject hall of fame starting after the 2 last-gen elites
+    for(let i=0;i<mlHallOfFame.length&&(i+2)<Math.round(BN*0.35);i++){
+      newBots[i+2]={x:12,y:H/2,heading:0,genes:[...mlHallOfFame[i].genes],step:0,dead:false,reached:false,trail:[],maxX:12,totalDist:0,totalYDist:0,lastY:H/2,closestGoalDist:Infinity,type:'hof'};
+    }
+
+    // Persistent explorers
+    const expPct=(document.getElementById('mlExp')?.value||10)/100;
+    const explorerCount=Math.round(BN*expPct);
+    const explorers=mkMlB(null,0);
+    for(let i=0;i<explorerCount;i++){newBots[BN-1-i]=explorers[i];newBots[BN-1-i].type='explorer';}
+
+    // Stagnation extinction
+    if(mlStag>=8){
+      mlStag=0;
+      document.getElementById('mlStuck').textContent='💥 SHAKE UP!';document.getElementById('mlStuck').style.color='#ff2d8a';
+      mlFlash=15;
+      const extinctCount=Math.round(BN*0.3);
+      const fresh=mkMlB(null,0);
+      for(let i=0;i<extinctCount;i++){newBots[BN-1-explorerCount-i]=fresh[i];newBots[BN-1-explorerCount-i].type='explorer';}
+    }
+    mlBots=newBots;
+    setTimeout(()=>{if(mlRun)runMl();},25);return;
+  }requestAnimationFrame(runMl);
+}
+
+function drawMl(){
+  const c=document.getElementById('mlC'),x=c.getContext('2d'),W=c.width,H=c.height;x.clearRect(0,0,W,H);
+  // Extinction flash: red border glow
+  if(mlFlash>0){
+    mlFlash--;
+    const alpha=mlFlash/15*0.6;
+    x.save();
+    x.shadowColor='#ff2d8a';x.shadowBlur=30;
+    x.strokeStyle=`rgba(255,45,138,${alpha})`;x.lineWidth=4;
+    x.strokeRect(2,2,W-4,H-4);
+    x.restore();
+    // Flash text
+    if(mlFlash>8){
+      x.save();x.font='bold 20px Bangers,cursive';x.textAlign='center';x.fillStyle=`rgba(255,45,138,${alpha+0.2})`;
+      x.fillText('💥 EXTINCTION EVENT! New explorers incoming!',W/2,H/2);x.restore();
+    }
+  }
+  // Draw barriers
+  for(const b of mlBarriers){
+    const g=x.createLinearGradient(b.x,b.y,b.x,b.y+b.h);
+    g.addColorStop(0,'rgba(180,77,255,.25)');g.addColorStop(1,'rgba(180,77,255,.1)');
+    x.fillStyle=g;x.fillRect(b.x,b.y,b.w,b.h);
+    x.strokeStyle='rgba(180,77,255,.3)';x.lineWidth=1;x.strokeRect(b.x,b.y,b.w,b.h);
+  }
+  // Goal
+  x.save();x.shadowColor='#ffe600';x.shadowBlur=16;x.font='26px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('⭐',mlGoal.x,mlGoal.y);x.restore();
+  x.font='14px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('🚀',12,H/2);
+  // Trails colored by type
+  for(const b of mlBots){
+    if(b.trail.length<2)continue;x.beginPath();
+    if(b.reached)x.strokeStyle='rgba(57,255,20,.5)';
+    else if(b.dead)x.strokeStyle='rgba(255,255,255,.01)';
+    else if(b.type==='hof')x.strokeStyle='rgba(255,50,50,.35)';
+    else if(b.type==='explorer')x.strokeStyle=mlFlash>0?'rgba(255,60,60,.4)':'rgba(255,160,40,.2)';
+    else if(b.type==='elite')x.strokeStyle='rgba(255,230,0,.25)';
+    else x.strokeStyle='rgba(180,77,255,.12)';
+    x.lineWidth=b.reached?2.5:b.type==='hof'?1.8:b.type==='elite'?1.2:0.5;
+    x.moveTo(b.trail[0].x,b.trail[0].y);
+    for(let i=1;i<b.trail.length;i++)x.lineTo(b.trail[i].x,b.trail[i].y);
+    x.stroke();
+  }
+  // Bots colored by type
+  x.shadowBlur=0;
+  for(const b of mlBots){
+    if(b.dead&&!b.reached)continue;
+    const isFlashExplorer=mlFlash>0&&b.type==='explorer';
+    const isHof=b.type==='hof';
+    const r=b.reached?5:isFlashExplorer?4:isHof?4:b.type==='elite'?3.5:2.5;
+    x.beginPath();x.arc(b.x,b.y,r,0,Math.PI*2);
+    if(b.reached)x.fillStyle='#39ff14';
+    else if(isFlashExplorer)x.fillStyle='#ff3333';
+    else if(isHof)x.fillStyle='#ff3333';
+    else if(b.type==='elite')x.fillStyle='#ffe600';
+    else if(b.type==='explorer')x.fillStyle='#ff8c00';
+    else x.fillStyle='#b44dff';
+    x.shadowColor=x.fillStyle;x.shadowBlur=isHof?14:b.reached?10:isFlashExplorer?16:b.type==='elite'?6:2;x.fill();x.shadowBlur=0;
+  }
+  if(mlReached){x.save();x.font='bold 12px Fredoka,sans-serif';x.fillStyle='rgba(57,255,20,.75)';x.textAlign='right';x.fillText('🎉 They learned it!',W-6,H-6);x.restore();}
+}
+
+// ══ DATA DASHBOARD ══
+let dInit=false;
+const sls=[
+  {id:'difficulty',l:'Difficulty',i:'💀',v:5,c:'#ff2d8a'},
+  {id:'loot',l:'Loot Drop Rate',i:'🎁',v:5,c:'#b44dff'},
+  {id:'levelLen',l:'Level Length',i:'📏',v:5,c:'#00d4ff'},
+  {id:'bpPrice',l:'Battle Pass $',i:'💰',v:5,c:'#ffe600'},
+  {id:'ads',l:'Ad Frequency',i:'📺',v:3,c:'#ff6b2b'},
+  {id:'events',l:'Live Events',i:'🎉',v:5,c:'#39ff14'}
+];
+const mts=[
+  {id:'playTime',l:'Avg Play Time',i:'⏱️',c:'#00d4ff'},
+  {id:'retention',l:'Players Coming Back',i:'🔁',c:'#39ff14'},
+  {id:'satisfaction',l:'Satisfaction',i:'😊',c:'#ff6b2b'},
+  {id:'revenue',l:'Revenue',i:'💵',c:'#ffe600'},
+  {id:'quitRate',l:'Quit Rate',i:'🚪',c:'#ff2d8a'}
+];
+// Bell curve helper: peaks at 'peak' value (0-10), width controls how forgiving
+function bell(val,peak,width){return Math.exp(-((val-peak)**2)/(2*width*width));}
+
+function initDD(){if(dInit){uM();return;}dInit=true;const sc=document.getElementById('dS'),mc=document.getElementById('dC');
+sc.innerHTML='<div style="font-family:Bangers,cursive;font-size:13px;color:var(--green);text-align:center">🎮 Settings</div>';
+sls.forEach(s=>{const g=document.createElement('div');g.className='sg';g.innerHTML=`<label><span>${s.i} ${s.l}</span><span id="v-${s.id}" style="color:${s.c}">${s.v}</span></label><input type="range" min="0" max="10" value="${s.v}" id="s-${s.id}" style="accent-color:${s.c}">`;sc.appendChild(g);g.querySelector('input').addEventListener('input',e=>{s.v=+e.target.value;document.getElementById('v-'+s.id).textContent=s.v;uM();});});
+mc.innerHTML='<div style="font-family:Bangers,cursive;font-size:13px;color:var(--green);text-align:center">📊 Players</div>';
+mts.forEach(m=>{const d=document.createElement('div');d.className='dm';d.innerHTML=`<div class="mi">${m.i}</div><div class="mn"><div class="ml">${m.l}</div><div class="mbb"><div class="mb" id="b-${m.id}" style="width:50%;background:${m.c}"></div><div class="mv" id="mv-${m.id}">50%</div></div></div>`;mc.appendChild(d);});uM();}
+
+function uM(){
+  const v={};sls.forEach(s=>v[s.id]=s.v);
+  const d=v.difficulty, l=v.loot, ln=v.levelLen, bp=v.bpPrice, a=v.ads, ev=v.events;
+
+  // PLAY TIME: bell on difficulty(5), bell on level length(6), hurt by too many ads, helped by events
+  const pt=cl(
+    bell(d,5,2.5)*40 +      // difficulty sweet spot at 5
+    bell(ln,6,2.5)*25 +     // level length sweet spot at 6
+    bell(l,5,3)*15 +         // loot sweet spot at 5
+    ev*2 -                    // events always help a bit
+    Math.max(0,(a-3))*5 +    // ads above 3 start hurting
+    10                        // base
+  );
+
+  // RETENTION: bell on difficulty(4), loves events, hurt by ads, helped by good loot
+  const ret=cl(
+    bell(d,4,2.5)*35 +      // slightly easier sweet spot
+    bell(l,6,2.5)*25 +       // generous loot helps retention
+    bell(ln,5,3)*15 +        // medium levels
+    ev*3 -                    // events are huge for retention
+    a*3 +                     // every ad hurts retention
+    15
+  );
+
+  // SATISFACTION: bell on everything — this is the "everything in balance" metric
+  const sat=cl(
+    bell(d,5,2)*20 +
+    bell(l,5,2.5)*20 +
+    bell(ln,5,2.5)*15 +
+    bell(bp,4,2.5)*15 +     // price sweet spot at 4
+    bell(a,2,2)*15 +         // few ads preferred
+    ev*1.5 +
+    5
+  );
+
+  // REVENUE: ads generate revenue (bell at ~5), BP price has sweet spot (bell at 6),
+  // BUT only if players stick around (retention matters)
+  const retFactor=ret/100; // 0-1, how many players you have
+  const adRev=bell(a,5,2.5)*40; // ad revenue peaks at 5 ads
+  const bpRev=bell(bp,6,2)*35;  // BP revenue peaks at $6
+  const eventRev=ev*2;           // events drive spending
+  const lootRev=bell(l,4,2)*15;  // scarcer loot = more spending to get it
+  const rev=cl((adRev+bpRev+eventRev+lootRev)*retFactor+5);
+
+  // QUIT RATE: inverse of satisfaction + difficulty extremes + ad fatigue
+  const qr=cl(
+    100-sat +
+    (d>7?(d-7)*8:0) +        // extreme difficulty spikes quits
+    (d<2?(2-d)*6:0) +        // too easy also causes quits
+    (a>5?(a-5)*5:0) +        // ad fatigue
+    (bp>8?(bp-8)*6:0) -      // overpriced BP
+    ev*1.5                    // events reduce quits
+  );
+
+  sM('playTime',pt);sM('retention',ret);sM('satisfaction',sat);sM('revenue',rev);sM('quitRate',qr);
+}
+function cl(v){return Math.max(2,Math.min(98,Math.round(v)));}
+function sM(id,val){const b=document.getElementById('b-'+id),v=document.getElementById('mv-'+id);if(!b)return;b.style.width=val+'%';v.textContent=val+'%';if(id==='quitRate')b.style.background=val>60?'#ff2d8a':val>35?'#ff6b2b':'#39ff14';else{const m=mts.find(m=>m.id===id);b.style.background=val<30?'#ff2d8a':val<55?'#ff6b2b':m.c;}}
+</script></body></html>
